@@ -1,25 +1,39 @@
 import sys, os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from flask import Flask, render_template, redirect, url_for, request, Blueprint
+from flask import Flask, redirect, url_for, request, Blueprint, send_from_directory, render_template_string
 from backend.models.product import Product
 from backend.database import db
 from backend.config import Config
 
+# === Corrige le chemin pour bien importer les fichiers backend ===
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# === Définir le chemin de base ===
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
+# === Création de l'application Flask ===
+app = Flask(
+    __name__,
+    static_folder=os.path.join(BASE_DIR, 'frontend', 'assets')  # 📁 Dossier des fichiers CSS/images
+)
+
+# === Config de la base de données ===
+app.config.from_object(Config)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///shop.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db.init_app(app)
+
 # --------------------------
-# Blueprint du panier
+# Panier (User Story 8)
 # --------------------------
 cart_bp = Blueprint('cart', __name__, url_prefix='/cart')
-
-# Panier en mémoire {product_id: quantity}
 cart_data = {}
 
 @cart_bp.route('/', methods=['GET', 'POST'])
 def view_cart():
+    """Affiche le panier"""
     global cart_data
 
     if request.method == 'POST':
-        # Mise à jour des quantités depuis le formulaire
         for key, value in request.form.items():
             if key.startswith('qty_'):
                 product_id = int(key.split('_')[1])
@@ -30,7 +44,6 @@ def view_cart():
                     del cart_data[product_id]
         return redirect(url_for('cart.view_cart'))
 
-    # Préparer les items pour le template
     cart_items = []
     total = 0
     for product_id, quantity in cart_data.items():
@@ -44,77 +57,57 @@ def view_cart():
                 'subtotal': subtotal
             })
 
-    return render_template('cart.html', cart_items=cart_items, total=total)
+    # Charger directement le fichier cart.html dans frontend/
+    with open(os.path.join(BASE_DIR, 'frontend', 'cart.html'), encoding='utf-8') as f:
+        html = f.read()
+    return render_template_string(html, cart_items=cart_items, total=total)
 
-@cart_bp.route('/add_to_cart/<int:product_id>')
+@cart_bp.route('/add/<int:product_id>')
 def add_to_cart(product_id):
+    """Ajoute un produit au panier"""
     global cart_data
-    if product_id in cart_data:
-        cart_data[product_id] += 1
-    else:
-        cart_data[product_id] = 1
+    cart_data[product_id] = cart_data.get(product_id, 0) + 1
     return redirect(url_for('home'))
 
-# --------------------------
-# Application principale
-# --------------------------
-app = Flask(
-    __name__,
-    template_folder="templates",        # 📁 HTML ici
-    static_folder="../frontend/assets"  # 📁 CSS et images ici
-)
-
-# Config Flask
-app.config.from_object(Config)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///shop.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-# Init DB
-db.init_app(app)
-
-# Register blueprint
 app.register_blueprint(cart_bp)
 
-# Liste de 50 produits pour insertion automatique
+# --------------------------
+# Produits (User Story 2)
+# --------------------------
 products_list = [
-    ("T-shirt Rouge", 19.99), ("T-shirt Bleu", 19.99), ("T-shirt Vert", 19.99),
-    ("Chaussures Running", 59.99), ("Chaussures Basket", 69.99), ("Chaussures Ville", 79.99),
-    ("Casquette Rouge", 14.99), ("Casquette Bleue", 14.99), ("Casquette Noire", 14.99),
-    ("Jean Slim", 39.99), ("Jean Regular", 39.99), ("Jean Noir", 42.99),
-    ("Pull Col Rond", 29.99), ("Pull Col V", 29.99), ("Sweat Capuche", 34.99),
-    ("Veste Cuir", 99.99), ("Veste Jeans", 89.99), ("Veste Hiver", 119.99),
-    ("Chaussettes Courtes", 5.99), ("Chaussettes Longues", 6.99), ("Ceinture Cuir", 19.99),
-    ("Sac à Dos", 49.99), ("Sac Bandoulière", 44.99), ("Pochette", 24.99),
-    ("Montre Classique", 79.99), ("Montre Sport", 89.99), ("Lunettes Soleil", 29.99),
-    ("Bonnet", 12.99), ("Écharpe", 14.99), ("Gants", 9.99),
-    ("T-shirt Blanc", 19.99), ("T-shirt Noir", 19.99), ("T-shirt Gris", 19.99),
-    ("Chaussures Été", 59.99), ("Chaussures Hiver", 69.99), ("Chaussures Printemps", 59.99),
-    ("Casquette Été", 14.99), ("Casquette Hiver", 14.99), ("Casquette Sport", 14.99),
-    ("Short Jean", 29.99), ("Short Sport", 24.99), ("Short Plage", 19.99),
-    ("Chemise Blanche", 34.99), ("Chemise Bleu", 34.99), ("Chemise à Carreaux", 39.99),
-    ("Veste Légère", 69.99), ("Veste Imperméable", 79.99), ("Veste Sport", 59.99),
-    ("Pantalon Chino", 44.99), ("Pantalon Cargo", 49.99), ("Pantalon Sport", 39.99)
+    ("T-shirt Rouge", 19.99), ("Chaussures Running", 59.99),
+    ("Casquette Noire", 14.99), ("Jean Slim", 39.99),
+    ("Pull Col Rond", 29.99), ("Sweat Capuche", 34.99),
+    ("Veste Cuir", 99.99), ("Bonnet", 12.99)
 ]
 
-# Route accueil
 @app.route('/')
 def home():
-    """Affiche la page d'accueil avec les produits"""
+    """Page d'accueil sans templates/"""
     products = Product.query.all()
 
-    # Si la table est vide, ajouter les 50 produits
     if len(products) == 0:
         for name, price in products_list:
             db.session.add(Product(name=name, price=price))
         db.session.commit()
-        products = Product.query.all()  # recharge tous les produits
+        products = Product.query.all()
 
-    return render_template('index.html', products=products)
+    with open(os.path.join(BASE_DIR, 'frontend', 'index.html'), encoding='utf-8') as f:
+        html = f.read()
+    return render_template_string(html, products=products)
+
+# --------------------------
+# Route statique (CSS, images)
+# --------------------------
+@app.route('/assets/<path:filename>')
+def serve_static(filename):
+    """Permet de charger CSS et images depuis frontend/assets"""
+    return send_from_directory(os.path.join(BASE_DIR, 'frontend', 'assets'), filename)
 
 # --------------------------
 # Lancer l'application
 # --------------------------
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()  # Crée les tables si elles n'existent pas
+        db.create_all()
     app.run(debug=True)
