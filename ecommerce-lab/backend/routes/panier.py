@@ -1,8 +1,8 @@
 import sys, os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from flask import Blueprint, render_template, redirect, url_for, request, session
-from backend.models.product import Product
+from flask import Blueprint, jsonify, render_template, redirect, url_for, request, session
+from backend.models.produit import Product
 
 # --------------------------
 # Blueprint du panier
@@ -63,3 +63,27 @@ def ajouter_au_panier(produit_id):
 
     session.modified = True
     return redirect(url_for('home'))
+
+@panier_bp.route("/ajouter-au-panier-ajax", methods=["POST"])
+def ajouter_au_panier_ajax():
+    produit_id = int(request.form.get("produit_id"))
+    produit = Product.query.get(produit_id)
+    if not produit:
+        return jsonify({"status": "error", "message": "Produit introuvable"})
+
+    panier = session.get("panier", [])
+    for item in panier:
+        if item["id"] == produit.id:
+            item["quantite"] += 1
+            break
+    else:
+        panier.append({
+            "id": produit.id,
+            "nom": produit.nom,
+            "prix": produit.prix,
+            "quantite": 1
+        })
+
+    session["panier"] = panier
+    session.modified = True
+    return jsonify({"status": "success", "message": f"{produit.nom} ajouté au panier 💖"})

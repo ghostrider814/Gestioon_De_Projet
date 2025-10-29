@@ -1,0 +1,77 @@
+:root {
+  --fond: #fffafc;
+  --rose: #f8bbd0;
+  --lavande: #e1bee7;
+  --accent: #c2185b;
+  --gris: #777;
+}
+
+body {
+  background-color: var(--fond);
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 40px;
+  color: #333;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+h1 {
+  font-size: 2rem;
+  color: var(--accent);
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: var(--gris);
+  margin-bottom: 10px;
+}
+
+.btn-retour {
+  display: inline-block;
+  margin-top: 10px;
+  background-color: var(--lavande);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.btn-retour:hover {
+  background-color: var(--accent);
+}
+
+.contact-infos {
+  max-width: 600px;
+  margin: 0 auto;
+  background-color: var(--rose);
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.info-block {
+  margin-bottom: 20px;
+}
+
+.info-block h3 {
+  color: var(--accent);
+  margin-bottom: 5px;
+}
+
+.info-block p {
+  font-size: 1rem;
+  color: #444;
+  margin: 0;
+}
+
+footer {
+  text-align: center;
+  margin-top: 40px;
+  font-size: 0.85rem;
+  color: var(--gris);
+}
