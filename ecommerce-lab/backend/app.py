@@ -1,6 +1,6 @@
 import sys, os
 from flask import Flask, redirect, url_for, request, Blueprint, send_from_directory, render_template_string
-from backend.models.product import Product
+from backend.models.produit import Produit
 from backend.database import db
 from backend.config import Config
 
@@ -25,56 +25,58 @@ db.init_app(app)
 # --------------------------
 # Panier (User Story 8)
 # --------------------------
-cart_bp = Blueprint('cart', __name__, url_prefix='/cart')
-cart_data = {}
+panier_bp = Blueprint('panier', __name__, url_prefix='/panier')
+panier_data = {}
 
-@cart_bp.route('/', methods=['GET', 'POST'])
-def view_cart():
+@panier_bp.route('/', methods=['GET', 'POST'])
+def voir_panier():
     """Affiche le panier"""
-    global cart_data
+    global panier_data
 
     if request.method == 'POST':
         for key, value in request.form.items():
             if key.startswith('qty_'):
-                product_id = int(key.split('_')[1])
+                produit_id = int(key.split('_')[1])
                 qty = int(value)
                 if qty > 0:
-                    cart_data[product_id] = qty
-                elif product_id in cart_data:
-                    del cart_data[product_id]
-        return redirect(url_for('cart.view_cart'))
+                    panier_data[produit_id] = qty
+                elif produit_id in panier_data:
+                    del panier_data[produit_id]
+        return redirect(url_for('panier.voir_panier'))
 
-    cart_items = []
+    panier_items = []
     total = 0
-    for product_id, quantity in cart_data.items():
-        product = Product.query.get(product_id)
-        if product:
-            subtotal = product.price * quantity
-            total += subtotal
-            cart_items.append({
-                'product': product,
-                'quantity': quantity,
-                'subtotal': subtotal
+    for produit_id, quantite in panier_data.items():
+        produit = Produit.query.get(produit_id)
+        if produit:
+            sous_total = produit.price * quantite
+            total += sous_total
+            panier_items.append({
+                'produit': produit,
+                'quantite': quantite,
+                'sous_total': sous_total
             })
 
-    # Charger directement le fichier cart.html dans frontend/
-    with open(os.path.join(BASE_DIR, 'frontend', 'cart.html'), encoding='utf-8') as f:
+    # Charger directement le fichier panier.html depuis frontend/
+    with open(os.path.join(BASE_DIR, 'frontend', 'panier.html'), encoding='utf-8') as f:
         html = f.read()
-    return render_template_string(html, cart_items=cart_items, total=total)
+    return render_template_string(html, panier_items=panier_items, total=total)
 
-@cart_bp.route('/add/<int:product_id>')
-def add_to_cart(product_id):
+
+@panier_bp.route('/ajouter/<int:produit_id>')
+def ajouter_au_panier(produit_id):
     """Ajoute un produit au panier"""
-    global cart_data
-    cart_data[product_id] = cart_data.get(product_id, 0) + 1
+    global panier_data
+    panier_data[produit_id] = panier_data.get(produit_id, 0) + 1
     return redirect(url_for('home'))
 
-app.register_blueprint(cart_bp)
+
+app.register_blueprint(panier_bp)
 
 # --------------------------
 # Produits (User Story 2)
 # --------------------------
-products_list = [
+produits_list = [
     ("T-shirt Rouge", 19.99), ("Chaussures Running", 59.99),
     ("Casquette Noire", 14.99), ("Jean Slim", 39.99),
     ("Pull Col Rond", 29.99), ("Sweat Capuche", 34.99),
@@ -84,17 +86,18 @@ products_list = [
 @app.route('/')
 def home():
     """Page d'accueil sans templates/"""
-    products = Product.query.all()
+    produits = Produit.query.all()
 
-    if len(products) == 0:
-        for name, price in products_list:
-            db.session.add(Product(name=name, price=price))
+    if len(produits) == 0:
+        for nom, prix in produits_list:
+            db.session.add(Produit(name=nom, price=prix))
         db.session.commit()
-        products = Product.query.all()
+        produits = Produit.query.all()
 
     with open(os.path.join(BASE_DIR, 'frontend', 'index.html'), encoding='utf-8') as f:
         html = f.read()
-    return render_template_string(html, products=products)
+    return render_template_string(html, produits=produits)
+
 
 # --------------------------
 # Route statique (CSS, images)
@@ -103,6 +106,7 @@ def home():
 def serve_static(filename):
     """Permet de charger CSS et images depuis frontend/assets"""
     return send_from_directory(os.path.join(BASE_DIR, 'frontend', 'assets'), filename)
+
 
 # --------------------------
 # Lancer l'application

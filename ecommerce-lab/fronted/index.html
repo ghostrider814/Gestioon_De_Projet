@@ -40,7 +40,7 @@
             gap: 20px;
         }
         
-        .product {
+        .produit {
             background-color: white;
             border-radius: 15px;
             padding: 20px;
@@ -49,15 +49,15 @@
             transition: 0.3s;
         }
         
-        .product:hover {
+        .produit:hover {
             transform: scale(1.03);
         }
         
-        .product img {
+        .produit img {
             width: 50%;
             height: 100px;
             object-fit: cover;
-            border-radius: px;
+            border-radius: 8px;
         }
         
         .btn {
@@ -87,26 +87,10 @@
 
     <header>
         <h1>🛍 Celio-Shop</h1>
-        <a href="/cart" class="btn">Voir le panier</a>
+        <a href="/panier" class="btn">Voir le panier</a>
     </header>
 
     <div class="container">
-        {% for p in products %}
-        <div class="product">
+        {% for p in produits %}
+        <div class="produit">
             <img src="{{ url_for('static', filename='images/' + p.name|lower + '.jpg') }}" alt="{{ p.name }}">
-
-            <h3>{{ p.name }}</h3>
-            <p><strong>{{ "%.2f"|format(p.price) }} €</strong></p>
-            <a href="{{ url_for('cart.add_to_cart', product_id=p.id) }}" class="btn">🛒 Ajouter au panier</a>
-
-        </div>
-        {% endfor %}
-    </div>
-
-    <footer>
-        <p>© 2025 Celio-Shop– Tous droits réservés.</p>
-    </footer>
-
-</body>
-
-</html>

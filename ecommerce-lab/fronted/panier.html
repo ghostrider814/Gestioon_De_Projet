@@ -99,14 +99,14 @@
                 <th>Sous-total</th>
             </tr>
 
-            {% for item in cart_items %}
+            {% for item in panier_items %}
             <tr>
-                <td>{{ item.product.name }}</td>
-                <td>{{ "%.2f"|format(item.product.price) }} €</td>
+                <td>{{ item.produit.nom }}</td>
+                <td>{{ "%.2f"|format(item.produit.prix) }} €</td>
                 <td>
-                    <input type="number" name="qty_{{ item.product.id }}" value="{{ item.quantity }}" min="0">
+                    <input type="number" name="qty_{{ item.produit.id }}" value="{{ item.quantite }}" min="0">
                 </td>
-                <td>{{ "%.2f"|format(item.subtotal) }} €</td>
+                <td>{{ "%.2f"|format(item.sous_total) }} €</td>
             </tr>
             {% endfor %}
         </table>
