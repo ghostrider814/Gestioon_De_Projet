@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Choisir un mode de paiement 🪙</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#fafafa; text-align:center; padding-top:50px; }
+    h2 { color:#333; margin-bottom:30px; }
+    .payment-options { display:flex; justify-content:center; gap:20px; flex-wrap:wrap; }
+    .option { background:white; border-radius:15px; padding:20px; width:180px; box-shadow:0 4px 10px rgba(0,0,0,0.1); cursor:pointer; transition:transform .2s, box-shadow .2s; }
+    .option:hover { transform:translateY(-5px); box-shadow:0 8px 15px rgba(0,0,0,0.15); }
+    .option img { width:60px; height:auto; margin-bottom:10px; }
+    #cash-form { margin-top:30px; display:none; }
+    input[type="email"] { padding:10px; width:300px; border-radius:5px; border:1px solid #ccc; margin-bottom:10px; }
+    button { padding:10px 20px; background-color:#28a745; color:white; border:none; border-radius:5px; font-size:16px; }
+    button:hover { background-color:#218838; }
+  </style>
+</head>
+<body>
+  <h2>Choisissez votre mode de paiement 🪙</h2>
+
+  <div class="payment-options">
+    <div class="option" onclick="payerCarte()">
+      <img src="https://cdn-icons-png.flaticon.com/512/196/196578.png" alt="Carte">
+      <p>Carte bancaire 💳</p>
+    </div>
+
+    <div class="option" onclick="payerPayPal()">
+      <img src="https://cdn-icons-png.flaticon.com/512/196/196567.png" alt="PayPal">
+      <p>PayPal 🟡</p>
+    </div>
+
+    <div class="option" onclick="afficherFormCash()">
+      <img src="https://cdn-icons-png.flaticon.com/512/2331/2331951.png" alt="Cash">
+      <p>Cash (à la livraison / retrait) 💵</p>
+    </div>
+  </div>
+
+  <form id="cash-form" action="/paiement/cash" method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="email" name="email" placeholder="Votre adresse email" required>
+    <br>
+    <button type="submit">Confirmer la commande</button>
+  </form>
+
+  <script>
+    function payerCarte() {
+      window.location.href = "https://buy.stripe.com/test_4gM4gydGzaV23Z056RbAs00";
+    }
+
+    function payerPayPal() {
+      window.location.href = "https://www.paypal.com/ncp/payment/KJUDQMJPSCEU6";
+    }
+
+    function afficherFormCash() {
+      document.getElementById("cash-form").style.display = "block";
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    }
+  </script>
+</body>
+</html>

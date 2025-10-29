@@ -107,11 +107,20 @@ def serve_static(filename):
     """Permet de charger CSS et images depuis frontend/assets"""
     return send_from_directory(os.path.join(BASE_DIR, 'frontend', 'assets'), filename)
 
+from flask_mail import Mail
+from backend.routes.checkout import checkout_bp, mail
 
-# --------------------------
+app = Flask(__name__)
+app.config.from_object('config')
+mail.init_app(app)
+
+app.register_blueprint(checkout_bp)
+
 # Lancer l'application
 # --------------------------
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     app.run(debug=True)
+
+
