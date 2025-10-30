@@ -4,10 +4,10 @@ from backend.extensions import db, migrate, login_manager, admin, csrf, compress
 from backend.config import Config
 
 # Blueprints
-from routes.produit import produit_bp
-from routes.recherche import recherche_bp
-from routes.categorie import categorie_bp
-from routes.contact import contact_bp
+from .routes.produit import produit_bp
+from .routes.recherche import recherche_bp
+from .routes.categorie import categorie_bp
+from .routes.contact import contact_bp
 from backend.routes.admin import admin_bp
 from backend.routes.authentification import auth_bp
 from backend.routes.commande import commande_bp
