@@ -1,0 +1,26 @@
+# Environnement Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+env/
+venv/
+.env
+
+# Base de données
+*.db
+instance/
+
+# Fichiers temporaires
+*.log
+*.sqlite3
+*.bak
+*.tmp
+
+# IDE
+.vscode/
+.idea/
+
+# Frontend compilé
+frontend/assets/*.map
+frontend/assets/*.DS_Store

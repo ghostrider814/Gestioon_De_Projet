@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Suivi de commande</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f6f9;
+      color: #2c3e50;
+      margin: 0;
+      padding: 30px;
+    }
+
+    h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    p {
+      font-size: 15px;
+      margin: 8px 0;
+    }
+
+    strong {
+      color: #34495e;
+    }
+
+    .badge {
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 500;
+      display: inline-block;
+    }
+
+    .en-attente { background-color: #cce4f6; color: #2c3e50; }
+    .en-cours   { background-color: #b3d1f0; color: #2c3e50; }
+    .expediee   { background-color: #9cc0e0; color: #2c3e50; }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 20px;
+    }
+
+    li {
+      background-color: #ffffff;
+      padding: 10px 15px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+
+    h3 {
+      margin-top: 30px;
+      font-size: 18px;
+      border-bottom: 1px solid #eaeaea;
+      padding-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Suivi de la commande #{{ commande.id }}</h2>
+
+  <p><strong>Date :</strong> {{ commande.date.strftime('%d/%m/%Y %H:%M') }}</p>
+  <p><strong>Montant :</strong> {{ "%.2f"|format(commande.total) }} MAD</p>
+  <p><strong>Statut :</strong>
+    {% if commande.statut == 'en attente' %}
+      <span class="badge en-attente">En attente</span>
+    {% elif commande.statut == 'en cours' %}
+      <span class="badge en-cours">En cours</span>
+    {% elif commande.statut == 'expédiée' %}
+      <span class="badge expediee">Expédiée</span>
+    {% else %}
+      <span class="badge">{{ commande.statut }}</span>
+    {% endif %}
+  </p>
+  <p><strong>Moyen de paiement :</strong> {{ commande.moyen_paiement }}</p>
+  <p><strong>Commentaire :</strong> {{ commande.commentaire or "—" }}</p>
+
+  <h3>Produits :</h3>
+  <ul>
+    {% for ligne in commande.produits %}
+      <li>{{ ligne.produit.nom }} × {{ ligne.quantite }}</li>
+    {% endfor %}
+  </ul>
+
+</body>
+</html>

@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from backend.models import db, Produit, Categorie
+from backend.models import db, Produit, Categorie , CommandeProduit, Commande
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -88,3 +88,25 @@ def modifier_categorie(id):
         flash("Catégorie modifiée avec succès !")
         return redirect(url_for('admin.gerer_categories'))
     return render_template('admin/modifier_categorie.html', categorie=categorie)
+
+@admin_bp.route('/dashboard')
+def dashboard():
+    return render_template('admin_dashboard.html')
+
+@admin_bp.route('/modifier-statut/<int:id>', methods=['POST'])
+def modifier_statut(id):
+    commande = Commande.query.get_or_404(id)
+    nouveau_statut = request.form.get("statut")
+    if nouveau_statut not in ["en attente", "en cours", "expédiée"]:
+        flash("Statut invalide.")
+        return redirect(url_for('admin.commandes'))
+
+    commande.statut = nouveau_statut
+    db.session.commit()
+    flash(f"Statut de la commande #{commande.id} mis à jour.")
+    return redirect(url_for('admin.commandes'))
+
+@admin_bp.route('/commandes')
+def commandes():
+    commandes = Commande.query.order_by(Commande.date.desc()).all()
+    return render_template('admin/liste_des_commandes.html', commandes=commandes)

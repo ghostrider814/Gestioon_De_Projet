@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Tableau de bord – Administration</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f6f9;
+      color: #2c3e50;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #dbe7f2;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+      color: #2c3e50;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .section {
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      margin-bottom: 30px;
+      padding: 20px;
+    }
+
+    .section h2 {
+      margin-top: 0;
+      font-size: 20px;
+      color: #2c3e50;
+      border-bottom: 1px solid #eaeaea;
+      padding-bottom: 10px;
+    }
+
+    .link-list {
+      list-style: none;
+      padding: 0;
+      margin: 20px 0 0 0;
+    }
+
+    .link-list li {
+      margin-bottom: 12px;
+    }
+
+    .link-list a {
+      text-decoration: none;
+      color: #2c3e50;
+      background-color: #e3ecf3;
+      padding: 10px 15px;
+      border-radius: 8px;
+      display: inline-block;
+      transition: background-color 0.2s;
+    }
+
+    .link-list a:hover {
+      background-color: #cddbe8;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 13px;
+      color: #7f8c8d;
+      margin: 40px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Bienvenue dans l’espace d’administration</h1>
+  </header>
+
+  <div class="container">
+
+    <div class="section">
+      <h2>🛍️ Gestion des produits et catégories</h2>
+      <ul class="link-list">
+        
+        <li><a href="{{ url_for('admin.gerer_produits') }}">📦 Voir tous les produits</a></li>
+        
+        <li><a href="{{ url_for('admin.gerer_categories') }}">📂 Voir toutes les catégories</a></li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>👥 Gestion des utilisateurs</h2>
+      <ul class="link-list">
+        <li><a href="{{ url_for('admin.gerer_admins') }}">🔐 Administrateurs</a></li>
+        <li><a href="{{ url_for('admin.gerer_clients') }}">👤 Comptes clients</a></li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>📦 Suivi des commandes</h2>
+      <ul class="link-list">
+        <li><a href="{{ url_for('admin.commandes') }}">📋 Voir les commandes</a></li>
+      </ul>
+    </div>
+
+  </div>
+
+  <footer>
+    <p>© 2025 Celio's Shop – Interface d’administration</p>
+  </footer>
+
+</body>
+</html>

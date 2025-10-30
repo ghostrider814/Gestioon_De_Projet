@@ -24,10 +24,26 @@
 
   <nav id="menu-nav" class="menu-nav">
     <a href="{{ url_for('public.accueil') }}">Accueil</a>
+
     {% for cat in categories %}
       <a href="{{ url_for('categorie.produits_par_categorie', id=cat.id) }}">{{ cat.nom }}</a>
     {% endfor %}
+
     <a href="{{ url_for('contact.contact') }}">Contact</a>
+
+    {# --- Ajout du menu client connecté --- #}
+    {% if session.get('role') == 'client' %}
+      <a href="{{ url_for('client.mes_commandes') }}">Mes commandes</a>
+      <a href="{{ url_for('client.tracking') }}">Tracking</a>
+    {% endif %}
+
+    {# --- Si l’utilisateur n’est pas connecté --- #}
+    {% if not session.get('user_id') %}
+      <a href="{{ url_for('auth.connexion') }}">Connexion</a>
+      <a href="{{ url_for('auth.inscription') }}">Inscription</a>
+    {% else %}
+      <a href="{{ url_for('auth.deconnexion') }}">Déconnexion</a>
+    {% endif %}
   </nav>
 </header>
 
@@ -39,11 +55,9 @@
       <button type="submit" class="btn btn-outline-primary">Rechercher</button>
     </form>
   </section>
-
 </nav>
 
 <main>
- 
   <section class="categories">
     <h2>Acheter par catégories</h2>
     <div class="liste-categories">

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Mes commandes</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f6f9;
+      color: #2c3e50;
+      margin: 0;
+      padding: 30px;
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 30px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 14px;
+      text-align: center;
+      border-bottom: 1px solid #eaeaea;
+    }
+
+    th {
+      background-color: #d0dce7;
+      font-weight: 500;
+    }
+
+    tr:hover {
+      background-color: #f0f4f8;
+    }
+
+    a {
+      text-decoration: none;
+      color: #2c3e50;
+      background-color: #e3ecf3;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      transition: background-color 0.2s;
+    }
+
+    a:hover {
+      background-color: #cddbe8;
+    }
+
+    .badge {
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 500;
+      display: inline-block;
+    }
+
+    .en-attente { background-color: #cce4f6; color: #2c3e50; }
+    .en-cours   { background-color: #b3d1f0; color: #2c3e50; }
+    .expediee   { background-color: #9cc0e0; color: #2c3e50; }
+  </style>
+</head>
+<body>
+
+  <h2>📦 Mes commandes</h2>
+
+  <table>
+    <tr>
+      <th>ID</th>
+      <th>Date</th>
+      <th>Total</th>
+      <th>Suivi</th>
+    </tr>
+    {% for commande in commandes %}
+    <tr>
+      <td>#{{ commande.id }}</td>
+      <td>{{ commande.date.strftime('%d/%m/%Y') }}</td>
+      <td>{{ "%.2f"|format(commande.total) }} MAD</td>
+    
+      <td><a href="{{ url_for('commande.suivi_commande', id=commande.id) }}">🔍 Voir</a></td>
+    </tr>
+    {% endfor %}
+  </table>
+
+</body>
+</html>

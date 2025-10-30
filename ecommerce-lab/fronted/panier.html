@@ -1,129 +1,212 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
-    <meta charset="UTF-8">
-    <title>Mon Panier</title>
-    <style>
-        /* Styles simplifiés pour clarté */
-        
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f9f9fb;
-            color: #333;
-            margin: 0;
-            padding: 0;
-        }
-        
-        header {
-            background-color: #ffe6f0;
-            text-align: center;
-            padding: 20px;
-        }
-        
-        table {
-            width: 90%;
-            margin: 30px auto;
-            border-collapse: collapse;
-            background-color: white;
-            border-radius: 15px;
-            overflow: hidden;
-        }
-        
-        th,
-        td {
-            padding: 15px;
-            text-align: center;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        
-        th {
-            background-color: #ffb6c1;
-            color: #333;
-        }
-        
-        tr:hover {
-            background-color: #fff3f5;
-        }
-        
-        input[type="number"] {
-            width: 60px;
-            padding: 5px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            text-align: center;
-        }
-        
-        .btn {
-            background-color: #ffb6c1;
-            border: none;
-            color: #333;
-            padding: 10px 20px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.2s;
-            text-decoration: none;
-        }
-        
-        .btn:hover {
-            background-color: #ff90a0;
-        }
-        
-        .total {
-            text-align: right;
-            width: 90%;
-            margin: 10px auto;
-            font-size: 1.2em;
-        }
-        
-        footer {
-            text-align: center;
-            color: #777;
-            margin: 30px 0;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Mon Panier</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f6f9;
+      color: #2c3e50;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #e3ecf3;
+      text-align: center;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    table {
+      width: 90%;
+      margin: 30px auto;
+      border-collapse: collapse;
+      background-color: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    th, td {
+      padding: 14px;
+      text-align: center;
+      border-bottom: 1px solid #eaeaea;
+    }
+
+    th {
+      background-color: #d0dce7;
+      color: #2c3e50;
+      font-weight: 500;
+    }
+
+    tr:hover {
+      background-color: #f0f4f8;
+    }
+
+    input[type="number"] {
+      width: 60px;
+      padding: 6px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .btn {
+      background-color: #a4c3d8;
+      border: none;
+      color: #2c3e50;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background-color 0.2s;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background-color: #8fb2cc;
+    }
+
+    .total {
+      text-align: right;
+      width: 90%;
+      margin: 10px auto;
+      font-size: 1.1em;
+      color: #34495e;
+    }
+
+    footer {
+      text-align: center;
+      color: #7f8c8d;
+      margin: 30px 0;
+      font-size: 14px;
+    }
+
+    /* Overlay pop-up */
+    .overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(6px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .popup-form {
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.08);
+      width: 360px;
+      text-align: center;
+    }
+
+    .popup-form input,
+    .popup-form select,
+    .popup-form textarea {
+      width: 90%;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    .popup-form h3 {
+      margin-bottom: 20px;
+      color: #2c3e50;
+    }
+  </style>
 </head>
 
 <body>
-    <header>
-        <h1>🛒 Mon Panier</h1>
-    </header>
+  <header>
+    <h1>🛒 Mon Panier</h1>
+  </header>
 
-    <form method="POST">
-        <table>
-            <tr>
-                <th>Produit</th>
-                <th>Prix</th>
-                <th>Quantité</th>
-                <th>Sous-total</th>
-            </tr>
+  <form method="POST">
+    <table>
+      <tr>
+        <th>Produit</th>
+        <th>Prix</th>
+        <th>Quantité</th>
+        <th>Sous-total</th>
+      </tr>
 
-            {% for item in panier_items %}
-            <tr>
-                <td>{{ item.produit.nom }}</td>
-                <td>{{ "%.2f"|format(item.produit.prix) }} €</td>
-                <td>
-                    <input type="number" name="qty_{{ item.produit.id }}" value="{{ item.quantite }}" min="0">
-                </td>
-                <td>{{ "%.2f"|format(item.sous_total) }} €</td>
-            </tr>
-            {% endfor %}
-        </table>
+      {% for item in panier_items %}
+      <tr>
+        <td>{{ item.produit.nom }}</td>
+        <td>{{ "%.2f"|format(item.produit.prix) }} €</td>
+        <td>
+          <input type="number" name="qty_{{ item.produit.id }}" value="{{ item.quantite }}" min="0">
+        </td>
+        <td>{{ "%.2f"|format(item.sous_total) }} €</td>
+      </tr>
+      {% endfor %}
+    </table>
 
-        <div class="total">
-            <strong>Total : {{ "%.2f"|format(total) }} €</strong>
-        </div>
+    <div class="total">
+      <strong>Total : {{ "%.2f"|format(total) }} €</strong>
+    </div>
 
-        <div style="text-align:center; margin-bottom: 30px;">
-            <button type="submit" class="btn">Mettre à jour le panier</button>
-            <a href="{{ url_for('home') }}" class="btn">⬅ Retour à la boutique</a>
-        </div>
-    </form>
+    <div style="text-align:center; margin-bottom: 30px;">
+      <button type="submit" class="btn">Mettre à jour le panier</button>
+      <a href="{{ url_for('home') }}" class="btn">⬅ Retour à la boutique</a>
+    </div>
+  </form>
 
-    <footer>
-        <p>© 2025 Celio-Shop – Merci pour votre confiance</p>
-    </footer>
+  <!-- Bouton Commander -->
+  <div style="text-align:center;">
+    <button type="button" class="btn" onclick="ouvrirFormulaire()">🧾 Commander</button>
+  </div>
+
+  <!-- Overlay pop-up -->
+  <div id="overlay" class="overlay">
+    <div class="popup-form">
+      <h3>Finaliser votre commande</h3>
+      <form method="POST" action="{{ url_for('commande.valider_commande') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="tel" name="telephone" placeholder="Téléphone" required><br>
+        <select name="moyen_paiement" required onchange="redirigerPaiement(this.value)">
+          <option value="">-- Moyen de paiement --</option>
+          <option value="carte">Carte bancaire 💳</option>
+          <option value="paypal">PayPal 🟡</option>
+          <option value="livraison">Espèces à la livraison 💵</option>
+        </select><br>
+        <textarea name="commentaire" placeholder="Commentaire (facultatif)" rows="3"></textarea><br>
+        <button type="submit" class="btn">✅ Confirmer</button>
+        <button type="button" class="btn" onclick="fermerFormulaire()">Annuler</button>
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 Celio-Shop – Merci pour votre confiance</p>
+  </footer>
+
+  <script>
+    function ouvrirFormulaire() {
+      document.getElementById("overlay").style.display = "flex";
+    }
+
+    function fermerFormulaire() {
+      document.getElementById("overlay").style.display = "none";
+    }
+
+    function redirigerPaiement(moyen) {
+      if (moyen === "carte") {
+        window.location.href = "https://buy.stripe.com/test_4gM4gydGzaV23Z056RbAs00";
+      } else if (moyen === "paypal") {
+        window.location.href = "https://www.paypal.com/ncp/payment/KJUDQMJPSCEU6";
+      }
+      // "livraison" reste sur place pour soumission du formulaire
+    }
+  </script>
 </body>
-
 </html>
