@@ -1,3 +1,5 @@
+from backend import db
+
 class CommandeProduit(db.Model):
     __tablename__ = "commande_produit"
 

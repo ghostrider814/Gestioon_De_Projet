@@ -1,8 +1,8 @@
 from flask import Blueprint, request, redirect, url_for, session, flash, render_template
 from backend.models.commande import Commande, CommandeProduit
 from backend.models.produit import Produit
-from backend.models.utilisateur import Utilisateur
-from backend.database import db
+from backend.models.utilisateurs import Utilisateur
+from backend import db
 from flask_mail import Message, Mail
 from flask import current_app as app
 from datetime import datetime

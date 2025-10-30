@@ -1,4 +1,5 @@
 from datetime import datetime
+from backend import db
 
 class Commande(db.Model):
     __tablename__ = "commande"
