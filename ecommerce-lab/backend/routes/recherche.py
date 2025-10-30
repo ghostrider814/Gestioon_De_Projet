@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request
-from models import Produit
+from ..models import Produit
 
 recherche_bp = Blueprint('search', __name__)
 

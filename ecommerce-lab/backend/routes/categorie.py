@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, session
-from models import Categorie, Produit
+from ..models import Categorie, Produit
 
 categorie_bp = Blueprint('category', __name__)
 
